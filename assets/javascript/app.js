@@ -1,4 +1,4 @@
-// firebase api 
+// firebase 
 var config = {
     apiKey: "AIzaSyArs_TIbKeL5vWjdUdamqkNSyKlAc7dul8",
     authDomain: "pleasework-b2de6.firebaseapp.com",
@@ -59,7 +59,7 @@ database.ref().on("child_added", function (childSnapshot) {
     var trainTime = childSnapshot.val().time;
     var frequencyOfTrain = childSnapshot.val().frequency;
 
-    //train information 
+    //train information
     console.log(nameOfTrain);
     console.log(destinationInput);
     console.log(trainTime);
@@ -68,18 +68,15 @@ database.ref().on("child_added", function (childSnapshot) {
 
     //using moment.js math
     var trainPrettyTime = moment.unix(trainTime).subtract(1, "years");
- 
+    var remainder = moment().diff(moment(trainPrettyTime), "X", "minutes") % frequencyOfTrain;
 
+//math for next train column
+ var nextTrainMin = frequencyOfTrain - remainder;
 
-    var remainder = moment().diff(moment(trainPrettyTime), "X","minutes") % frequencyOfTrain;
-  
-    var nextTrainMin = frequencyOfTrain - remainder;
-  
-
+//math for time when train will arrive
     var arrivalTrain = moment().add(nextTrainMin, "minutes").format("hh:mm");
 
- 
-
+//create new row for each of the inputs 
     var createRow = $("<tr>").append(
         $("<td>").text(nameOfTrain),
         $("<td>").text(destinationInput),
@@ -88,10 +85,7 @@ database.ref().on("child_added", function (childSnapshot) {
         $("<td>").text(nextTrainMin),
     );
 
-
+//do not forget to apend it into the table in our html
     $("#train-table > tbody").append(createRow);
-
-
-
 
 })
